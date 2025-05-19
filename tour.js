@@ -1,14 +1,16 @@
 const Tour = {
+    tourId: '',
     step:0,
     resizeObserver: new ResizeObserver(()=>{Tour.set_mask();}),
 
 };
 
-Tour.start = function(startStep = 0){
+Tour.start = function(tourId,startStep = 1){
+    Tour.tourId = tourId;
     document.body.classList.add('tour');
     //this.list = Array.from(document.querySelectorAll('[data-tour-step]'));
     //console.log(this.list);
-    Tour.set_step(1);
+    Tour.set_step(startStep);
 }
 
 Tour.next = function(){
@@ -25,9 +27,22 @@ Tour.set_step = function(stepnum){
     this.step = stepnum;
     Tour.set_mask();
 }
-
+Tour.get_step_element = function(){
+    var tourselector="";
+    if(tourId!=''){
+        tourselector = `[data-tour-id="${this.tourId}]`;
+    }
+    return  document.querySelector(`${tourselector}[data-tour-step="${this.step}"]`);
+}
+Tour.get_step_data = function(){
+    var tourselector="";
+    if(tourId!=''){
+        tourselector = `[data-tour-id="${this.tourId}]`;
+    }
+    return document.querySelector(`tour-data[data-tour-step="${this.step}"]${tourselector}`);
+}
 Tour.set_mask = function(){
-    var element = document.querySelector(`[data-tour-step="${this.step}"`);
+    var element = Tour.get_step_element();
     if(!element){Tour.end();return;}
     this.resizeObserver.disconnect();
     this.resizeObserver.observe(element);
@@ -45,7 +60,7 @@ Tour.set_mask = function(){
 Tour.show_data = function(){
     var box = document.querySelector('tour-tooltip');
     if(!box){return;}
-    var element = document.querySelector(`[data-tour-step="${this.step}"`);
+    var element = Tour.get_step_element();
 
     var data = document.querySelector(`[data-tour-step="${this.step}"]+tour-data`);
     if(!data){
