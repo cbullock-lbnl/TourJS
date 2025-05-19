@@ -1,0 +1,35 @@
+.tourMask{
+    display:none;
+}
+.tour .tourMask{
+    display:block;
+    position:fixed;
+    width:100vw;
+    height:100vh;
+    z-index: 10000;
+    background-color:black;
+    opacity: 00%;
+    pointer-events: auto;
+}
+.tour .tourHighlight{
+    z-index:11000;
+    box-shadow: 0 0 0 200vmax rgba(0, 0, 0,0.4), 0 0 5px 10px var(--bs-emphasis-color);
+    border-radius: 5px;
+    position:fixed;
+    transition-duration: 0.1s;
+}
+
+tour-data{
+    display:none;
+}
+
+tour-tooltip{
+    display:none;
+    position:absolute;
+    z-index:11000;
+    max-width:300px;
+    transition-duration: 0.1s;
+}
+.tour tour-tooltip.show{
+    display:block;
+}
