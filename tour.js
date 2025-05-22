@@ -8,9 +8,31 @@ const Tour = {
 Tour.start = function(tourId,startStep = 1){
     Tour.tourId = tourId;
     document.body.classList.add('tour');
+    Tour.create_pagination();
     //this.list = Array.from(document.querySelectorAll('[data-tour-step]'));
     //console.log(this.list);
     Tour.set_step(startStep);
+}
+
+Tour.create_pagination = function(){
+    var list = Array.from(document.querySelectorAll(`[data-tour-id="${this.tourId}"]:not(tour-data)`));
+    document.querySelectorAll('tour-tooltip .tooltip-footer ul .page-item:not(:first-child):not(:last-child)').forEach(function(element){element.remove();});
+    var pre_button = document.querySelector('tour-tooltip .tooltip-footer ul .page-item:last-child');
+    for(let i = 0 ; i< list.length ;i++){
+        //                    <li class="page-item"><button class="page-link" href="#">1</button></li>
+
+        var li = document.createElement('li');
+        li.classList.add('page-item');
+        var button = document.createElement('button');
+        button.classList.add('page-link');
+        button.textContent = i+1;
+        li.append(button);
+        button.onclick = ()=>{
+            Tour.set_step(i+1)
+        };
+
+        pre_button.before(li);
+    }
 }
 
 Tour.next = function(){
@@ -26,20 +48,40 @@ Tour.set_step = function(stepnum){
 
     this.step = stepnum;
     Tour.set_mask();
+    Tour.set_pagination_step();
 }
+Tour.set_pagination_step = function(){
+    var numbers = Array.from(document.querySelectorAll('tour-tooltip .tooltip-footer ul .page-item:not(:first-child):not(:last-child)'));
+    
+    for(var n in numbers){
+        if(Math.abs(Number(this.step)-n-1)>2){
+            numbers[n].classList.add('d-none');
+        }else{
+            numbers[n].classList.remove('d-none');
+        }
+        if((Number(n)+1)==Number(this.step)){
+
+            numbers[n].classList.add('active');
+        }else{
+            numbers[n].classList.remove('active');
+        }
+    }
+
+}
+
 Tour.get_step_element = function(){
     var tourselector="";
-    if(tourId!=''){
-        tourselector = `[data-tour-id="${this.tourId}]`;
+    if(this.tourId!=''){
+        tourselector = `[data-tour-id="${this.tourId}"]`;
     }
     return  document.querySelector(`${tourselector}[data-tour-step="${this.step}"]`);
 }
 Tour.get_step_data = function(){
     var tourselector="";
-    if(tourId!=''){
-        tourselector = `[data-tour-id="${this.tourId}]`;
+    if(this.tourId!=''){
+        tourselector = `[data-tour-id="${this.tourId}"]`;
     }
-    return document.querySelector(`tour-data[data-tour-step="${this.step}"]${tourselector}`);
+    return document.querySelector(`tour-data${tourselector}[data-tour-step="${this.step}"]`);
 }
 Tour.set_mask = function(){
     var element = Tour.get_step_element();
@@ -62,7 +104,8 @@ Tour.show_data = function(){
     if(!box){return;}
     var element = Tour.get_step_element();
 
-    var data = document.querySelector(`[data-tour-step="${this.step}"]+tour-data`);
+    //var data = document.querySelector(`[data-tour-step="${this.step}"]+tour-data`);
+    var data = Tour.get_step_data();
     if(!data){
         box.classList.remove('show');
         return;

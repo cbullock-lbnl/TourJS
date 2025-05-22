@@ -34,3 +34,7 @@ tour-tooltip{
     display:block;
 }
 
+
+/*tour-tooltip .tooltip-footer .page-item:not(:first-child):nth-child(5)~.page-item:not(:last-child){
+    display:none;
+}*/
